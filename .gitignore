@@ -1,0 +1,16 @@
+/logs/
+/*.classpath
+/*.project
+*.classpath
+#过滤数据库文件、sln解决方案文件、配置文件
+*.project
+*.settings
+*.iml
+*.iws
+*.ipr
+.idea/
+#过滤文件夹Debug,Release,obj
+sentinel-dashboard/target/
+/target/
+.DS_Store
+*.jar
