@@ -90,7 +90,7 @@ import org.springframework.stereotype.Component;
  *
  * @author leyou
  */
-@Component
+//@Component
 public class SentinelApiClient {
     private static Logger logger = LoggerFactory.getLogger(SentinelApiClient.class);
 

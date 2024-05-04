@@ -19,7 +19,21 @@ package com.alibaba.csp.sentinel.dashboard.rule;
  * @author Eric Zhao
  * @since 1.4.0
  */
-public interface DynamicRuleProvider<T> {
+public interface DynamicRuleService<T> {
+    /**
+     * 获取路由规则
+     */
+    T getRules(RuleParam param);
 
-    T getRules(String appName) throws Exception;
+    /**
+     * 推送路由规则
+     */
+    boolean publish(RuleParam param, T rules);
+
+    /**
+     * 获取存储路由的地址
+     */
+    default String getRulePath(RuleParam param) {
+        return null;
+    }
 }

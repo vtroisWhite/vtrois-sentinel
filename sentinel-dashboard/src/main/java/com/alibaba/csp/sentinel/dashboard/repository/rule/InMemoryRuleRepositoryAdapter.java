@@ -15,14 +15,15 @@
  */
 package com.alibaba.csp.sentinel.dashboard.repository.rule;
 
+import cn.hutool.core.date.DateUtil;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.RuleEntity;
+import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
+import com.alibaba.csp.sentinel.util.AssertUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.RuleEntity;
-import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
-import com.alibaba.csp.sentinel.util.AssertUtil;
 
 /**
  * @author leyou
@@ -42,7 +43,7 @@ public abstract class InMemoryRuleRepositoryAdapter<T extends RuleEntity> implem
     @Override
     public T save(T entity) {
         if (entity.getId() == null) {
-            entity.setId(nextId());
+            entity.setId(nextSnowflakeId());
         }
         T processedEntity = preProcess(entity);
         if (processedEntity != null) {
@@ -126,4 +127,11 @@ public abstract class InMemoryRuleRepositoryAdapter<T extends RuleEntity> implem
      * @return next unused id
      */
     abstract protected long nextId();
+
+    private final static long timeOffset = DateUtil.parseDate("2024-1-1").getTime();
+
+    private long nextSnowflakeId() {
+        //when the operation interval is greater than 100ms, id will not duplicated
+        return (System.currentTimeMillis() - timeOffset) / 100;
+    }
 }

@@ -16,16 +16,18 @@
 package com.alibaba.csp.sentinel.dashboard.controller;
 
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
-import com.alibaba.csp.sentinel.util.StringUtil;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.PostConstruct;
 
 /**
  * @author hisenyuan
  * @since 1.7.0
  */
+@Slf4j
 @RestController
 public class VersionController {
 
@@ -33,17 +35,23 @@ public class VersionController {
 
     @Value("${sentinel.dashboard.version:}")
     private String sentinelDashboardVersion;
+    @Value("${environment.plugin}")
+    private String plugin;
+    @Value("${environment.info}")
+    private String dc;
+
+    private static String fullDesc;
+
+    @PostConstruct
+    public void initFullDesc() {
+        StringBuilder sb = new StringBuilder(sentinelDashboardVersion);
+        sb.append(" ").append(plugin).append("-").append(dc);
+        fullDesc = sb.toString();
+        log.info("当前服务信息说明:{}", fullDesc);
+    }
 
     @GetMapping("/version")
     public Result<String> apiGetVersion() {
-        if (StringUtil.isNotBlank(sentinelDashboardVersion)) {
-            String res = sentinelDashboardVersion;
-            if (sentinelDashboardVersion.contains(VERSION_PATTERN)) {
-                res = sentinelDashboardVersion.substring(0, sentinelDashboardVersion.indexOf(VERSION_PATTERN));
-            }
-            return Result.ofSuccess(res);
-        } else {
-            return Result.ofFail(1, "getVersion failed: empty version");
-        }
+        return Result.ofSuccess(fullDesc);
     }
 }
